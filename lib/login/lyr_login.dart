@@ -114,44 +114,38 @@ class _LoginState extends State<Login> {
                       CustomFormButton(
                         innerText: 'Login',
                         onPressed: () async {
-                          if (_loginFormKey.currentState!.validate()) {
-                            try {
-                              UserCredential userCredential =
-                                  await _auth.signInWithEmailAndPassword(
-                                email: emailController.text,
-                                password: passwordController.text,
-                              );
-                              // If login is successful, navigate to the home page
-                              if (userCredential != null) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => HomePage(),
-                                  ),
-                                );
-                              }
-                            } on FirebaseAuthException catch (e) {
-                              // Handle login errors
-                              String errorMessage = 'Login failed.';
+                          try {
+                            UserCredential userCredential =
+                                await _auth.signInWithEmailAndPassword(
+                              email: emailController.text,
+                              password: passwordController.text,
+                            );
 
-                              if (e.code == 'user-not-found') {
-                                errorMessage = 'No user found for that email.';
-                              } else if (e.code == 'wrong-password') {
-                                errorMessage =
-                                    'Wrong password provided for that user.';
-                              }
+                            // If login is successful, navigate to the home page
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => HomePage(),
+                              ),
+                            );
+                          } on FirebaseAuthException catch (e) {
+                            // Handle login errors
+                            String errorMessage = 'Login failed.';
 
-                              final snackBar = SnackBar(
-                                content: Text(errorMessage),
-                              );
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(snackBar);
+                            if (e.code == 'user-not-found') {
+                              errorMessage = 'No user found for that email.';
+                            } else if (e.code == 'wrong-password') {
+                              errorMessage =
+                                  'Wrong password provided for that user.';
                             }
+
+                            final snackBar = SnackBar(
+                              content: Text(errorMessage),
+                            );
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackBar);
                           }
                         },
-                      ),
-                      const SizedBox(
-                        height: 18,
                       ),
                       SizedBox(
                         width: size.width * 0.8,

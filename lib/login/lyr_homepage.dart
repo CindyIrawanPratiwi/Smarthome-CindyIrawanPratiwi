@@ -1,3 +1,4 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -43,26 +44,32 @@ class _HomePageState extends State<HomePage> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const LoginPage()));
+                  ElevatedButton(
+                    onPressed: () {
+                      AwesomeDialog(
+                        context: context,
+                        dialogType: DialogType.warning,
+                        animType: AnimType.topSlide,
+                        showCloseIcon: true,
+                        title: 'Warning',
+                        desc: 'Apakah Anda Yakin Akan Menutup Aplikasi?',
+                        btnCancelOnPress: () {},
+                        btnOkOnPress: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => LoginPage()),
+                          );
+                        },
+                      ).show();
                     },
-                    child: RotatedBox(
-                      quarterTurns:
-                          1, // 90 derajat untuk mendapatkan arah panah ke atas
-                      child: Icon(
-                        Icons
-                            .logout_sharp, // Ganti ikon dengan ikon logout yang sesuai
-                        color: Colors.indigo,
-                        size: 28,
-                      ),
+                    child: Icon(
+                      Icons
+                          .login_outlined, // Ganti ikon dengan ikon logout yang sesuai
+                      color: Colors.indigo,
+                      size: 28,
                     ),
                   ),
-                  //],
-//),
                 ],
               ),
               SizedBox(height: 30),

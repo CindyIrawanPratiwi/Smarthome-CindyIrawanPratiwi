@@ -48,6 +48,7 @@ dependencies:
   geolocator: ^8.0.1
   geocoding: ^2.0.4
   google_maps_flutter: ^2.2.6
+  awesome_dialog: ^3.0.2
 
 
 dev_dependencies:
