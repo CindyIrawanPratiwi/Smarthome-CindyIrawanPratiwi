@@ -10,6 +10,7 @@ import 'package:flutter_app_smarthome/login/lyr_camera.dart';
 import 'package:flutter_app_smarthome/login/lyr_cctv.dart';
 import 'package:flutter_app_smarthome/login/lyr_lamp.dart';
 import 'package:flutter_app_smarthome/login/lyr_login.dart';
+import 'package:flutter_app_smarthome/login/lyr_maps.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import "package:flutter_app_smarthome/login/lyr_temperature.dart";
 import 'package:flutter_app_smarthome/login/gps.dart';
@@ -170,6 +171,39 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
                     const SizedBox(height: 28),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _cardMenu(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Camera(),
+                              ),
+                            );
+                          },
+                          icon: 'assets/images/camera.png',
+                          title: 'CAMERA 1',
+                          color: Color.fromARGB(255, 92, 178, 248),
+                          fontColor: Colors.white,
+                        ),
+                        _cardMenu(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MyMap(),
+                              ),
+                            );
+                          },
+                          icon: 'assets/images/gps.png',
+                          title: 'GPS 1',
+                          color: Color.fromARGB(255, 92, 178, 248),
+                          fontColor: Colors.white,
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),

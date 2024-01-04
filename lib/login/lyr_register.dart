@@ -10,6 +10,8 @@ import 'package:flutter_app_smarthome/login/login.dart';
 import 'package:flutter_app_smarthome/login/lyr_congrats.dart';
 import 'package:flutter_app_smarthome/login/lyr_login.dart';
 import 'package:flutter_app_smarthome/services/auth_service.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +25,54 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
+  String strLatLong = 'Belum Mendapatkan Lat dan Long, Silahkan tekan tombol';
+  String strAlamat = 'Mencari lokasi...';
+  bool loading = false;
+
+  //getLatLong
+  Future _getGeoLocationPosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    //location service not enabled, don't continue
+    if (!serviceEnabled) {
+      await Geolocator.openLocationSettings();
+      return Future.error('Location service Not Enabled');
+    }
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permission denied');
+      }
+    }
+
+    //permission denied forever
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error(
+        'Location permission denied forever, we cannot access',
+      );
+    }
+    //continue accessing the position of device
+    return await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+  }
+
+  // //getAddress
+  Future getAddressFromLongLat(Position position) async {
+    List placemarks =
+        await placemarkFromCoordinates(position.latitude, position.longitude);
+    print(placemarks);
+
+    Placemark place = placemarks[0];
+    setState(() {
+      strAlamat = '${place.street}, ${place.subLocality}, ${place.locality}, '
+          '${place.postalCode}, ${place.country}';
+    });
+  }
+
   final FirebaseAuth _auth = FirebaseAuth.instance;
   TextEditingController _fullName = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
@@ -61,11 +111,19 @@ class _RegisterState extends State<Register> {
   }
 
   void _register() async {
+    final authService = Provider.of<AuthService>(context, listen: false);
     try {
+      //Geolocator mendapatkan latitude
+      Position position = await _getGeoLocationPosition();
+      strLatLong = '${position.latitude}, ${position.longitude}';
+
+      //user
       UserCredential userCredential =
-          await _auth.createUserWithEmailAndPassword(
-        email: _usernameEmail.text,
-        password: _passwordController.text,
+          await authService.signUpWithEmailandPassword(
+        _usernameEmail.text,
+        _passwordController.text,
+        _fullName.text,
+        strLatLong.toLowerCase(),
       );
 
       User? user = userCredential.user;

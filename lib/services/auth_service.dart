@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 class AuthService extends ChangeNotifier {
   // instance of auth
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // sign user in
   Future<UserCredential> signInWithEmailandPassword(
@@ -24,22 +25,24 @@ class AuthService extends ChangeNotifier {
 
 // buat akun baru
   Future<UserCredential> signUpWithEmailandPassword(
-      String email, password) async {
+      String email, password, namaPengguna, lokasi) async {
     try {
-// sign up
+      //sign up
       UserCredential userCredential = await _firebaseAuth
           .createUserWithEmailAndPassword(email: email, password: password);
+      _firestore.collection('user').doc(userCredential.user!.uid).set({
+        'uid': userCredential.user!.uid,
+        'email': email,
+        'namaPengguna': namaPengguna,
+        'lokasi': lokasi,
+      });
 
       return userCredential;
     }
-// catch any error
+
+//catch any error
     on FirebaseAuthException catch (e) {
       throw Exception(e.code);
     }
-  }
-
-// sign user out
-  Future<void> signOut() async {
-    return await FirebaseAuth.instance.signOut();
   }
 }
